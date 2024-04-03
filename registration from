@@ -1,0 +1,131 @@
+
+# Student Registration form using python
+import tkinter as tk
+from tkinter import messagebox, ttk
+import re
+
+# Function to validate inputs
+def validate_inputs():
+    name = name_entry.get()
+    aicte_id = aicte_id_entry.get()
+    email = email_entry.get()
+    phone = phone_entry.get()
+    college_name = college_name_entry.get()
+
+    # Validate name (ensure it's not empty)
+    if not name.strip():
+        messagebox.showerror("Error", "Name cannot be empty.")
+        return False
+
+    # Validate AICTE ID (ensure it's not empty)
+    if not aicte_id.strip():
+        messagebox.showerror("Error", "AICTE ID cannot be empty.")
+        return False
+
+    # Validate email (using regular expression)
+    email_pattern = r'^[\w\.-]+@[\w\.-]+\.\w+$'
+    if not re.match(email_pattern, email):
+        messagebox.showerror("Error", "Invalid email address.")
+        return False
+
+    # Validate phone number (ensure it's a 10-digit number)
+    if not phone.isdigit() or len(phone) != 10:
+        messagebox.showerror("Error", "Invalid phone number.")
+        return False
+
+    # Validate college name (ensure it's not empty)
+    if not college_name.strip():
+        messagebox.showerror("Error", "College name cannot be empty.")
+        return False
+
+    return True
+
+# Function to generate PDF
+def generate_pdf():
+    if validate_inputs():
+        name = name_entry.get()
+        aicte_id = aicte_id_entry.get()
+        email = email_entry.get()
+        phone = phone_entry.get()
+        college_name = college_name_entry.get()
+
+        doc = SimpleDocTemplate(f"{name}.pdf", pagesize=letter)
+        elements = []
+        styles = getSampleStyleSheet()
+
+        elements.append(Paragraph(f"Name: {name}", styles["Heading3"]))
+        elements.append(Paragraph(f"AICTE ID: {aicte_id}", styles["BodyText"]))
+        elements.append(Paragraph(f"Email: {email}", styles["BodyText"]))
+        elements.append(Paragraph(f"Phone Number: {phone}", styles["BodyText"]))
+        elements.append(Paragraph(f"College Name: {college_name}", styles["BodyText"]))
+
+        doc.build(elements)
+        messagebox.showinfo("Success", "PDF generated successfully!")
+
+# Function to reset the input fields
+def reset_fields():
+    name_entry.delete(0, tk.END)
+    aicte_id_entry.delete(0, tk.END)
+    email_entry.delete(0, tk.END)
+    phone_entry.delete(0, tk.END)
+    college_name_entry.delete(0, tk.END)
+
+# Create the main window
+root = tk.Tk()
+root.title("Student Registration Form")
+root.geometry("400x400")  # Set the initial window size
+root.configure(bg="#F0F8FF")  # Set the background color for the entire page
+
+# Add the title
+title_label = tk.Label(root, text="Student Registration Form", font=("Arial", 18, "bold"), bg="#F0F8FF")
+title_label.grid(row=0, column=0, columnspan=2, padx=10, pady=10)
+
+# Style the input fields
+style = ttk.Style()
+style.theme_use("clam")  # Set the theme for the input fields
+style.configure("TEntry", padding=6, relief="flat", fieldbackground="white")
+
+# Create input fields
+name_label = ttk.Label(root, text="Name:", font=("Arial", 12))
+name_label.grid(row=1, column=0, padx=10, pady=10, sticky="w")
+name_entry = ttk.Entry(root, font=("Arial", 12))
+name_entry.grid(row=1, column=1, padx=10, pady=10, sticky="ew")
+
+aicte_id_label = ttk.Label(root, text="AICTE ID:", font=("Arial", 12))
+aicte_id_label.grid(row=2, column=0, padx=10, pady=10, sticky="w")
+aicte_id_entry = ttk.Entry(root, font=("Arial", 12))
+aicte_id_entry.grid(row=2, column=1, padx=10, pady=10, sticky="ew")
+
+email_label = ttk.Label(root, text="Email:", font=("Arial", 12))
+email_label.grid(row=3, column=0, padx=10, pady=10, sticky="w")
+email_entry = ttk.Entry(root, font=("Arial", 12))
+email_entry.grid(row=3, column=1, padx=10, pady=10, sticky="ew")
+
+phone_label = ttk.Label(root, text="Phone Number:", font=("Arial", 12))
+phone_label.grid(row=4, column=0, padx=10, pady=10, sticky="w")
+phone_entry = ttk.Entry(root, font=("Arial", 12))
+phone_entry.grid(row=4, column=1, padx=10, pady=10, sticky="ew")
+
+college_name_label = ttk.Label(root, text="College Name:", font=("Arial", 12))
+college_name_label.grid(row=5, column=0, padx=10, pady=10, sticky="w")
+college_name_entry = ttk.Entry(root, font=("Arial", 12))
+college_name_entry.grid(row=5, column=1, padx=10, pady=10, sticky="ew")
+
+# Create buttons
+button_frame = tk.Frame(root, bg="#F0F8FF")
+button_frame.grid(row=6, column=0, columnspan=2, padx=10, pady=20)
+
+submit_button = ttk.Button(button_frame, text="Submit", command=generate_pdf, style="Accent.TButton")
+submit_button.pack(side=tk.LEFT, padx=10)
+
+reset_button = ttk.Button(button_frame, text="Reset", command=reset_fields, style="Accent.TButton")
+reset_button.pack(side=tk.LEFT, padx=10)
+
+generate_pdf_button = ttk.Button(button_frame, text="Generate PDF", command=generate_pdf, style="Accent.TButton")
+generate_pdf_button.pack(side=tk.LEFT, padx=10)
+
+# Configure grid weights to make the input fields expandable
+root.columnconfigure(1, weight=1)
+
+# Start the main event loop
+root.mainloop()
